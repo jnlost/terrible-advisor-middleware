@@ -4,20 +4,20 @@ import openai
 import os
 
 # --------------------------
-# Create Flask app
+# Flask app
 # --------------------------
 app = Flask(__name__)
 CORS(app)
 
 # --------------------------
-# Load OpenAI API key
+# OpenAI API key
 # --------------------------
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 if not openai.api_key:
-    print("❌ WARNING: OPENAI_API_KEY is not set!")
+    print("❌ WARNING: OPENAI_API_KEY not set!")
 
 # --------------------------
-# /getAdvice route
+# /getAdvice endpoint
 # --------------------------
 @app.route("/getAdvice", methods=["POST"])
 def get_advice():
@@ -25,13 +25,13 @@ def get_advice():
     user_text = data.get("message", "")
 
     system_prompt = """
-    You are a silly, chaotic Roblox NPC called "Terrible Advisor".
-    Always give obviously bad advice, funny and safe.
-    Keep responses under 100 characters.
+    You are a chaotic Roblox NPC called 'Terrible Advisor'.
+    Always give silly, obviously bad advice that is safe to follow.
+    Keep answers short, playful, and under 100 characters.
     """
 
     try:
-        # ChatCompletion call compatible with OpenAI 1.106.1
+        # Call OpenAI ChatCompletion
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
@@ -42,16 +42,22 @@ def get_advice():
             temperature=1
         )
 
+        # Log full response for debugging
+        print("✅ OpenAI raw response:", response)
+
+        # Extract reply text
         reply = response.choices[0].message.content.strip()
+        print("✅ Reply extracted:", reply)
+
         return jsonify({"reply": reply})
 
     except Exception as e:
-        # Log full error to Render logs
+        # Print full error to logs
         print("❌ OpenAI Error:", repr(e))
         return jsonify({"reply": "Oops! My advice machine is jammed."})
 
 # --------------------------
-# Run Flask app
+# Run the app
 # --------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
