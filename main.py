@@ -1,13 +1,3 @@
-import os
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-from openai import OpenAI
-
-app = Flask(__name__)
-CORS(app)
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 @app.route("/getAdvice", methods=["POST"])
 def get_advice():
     try:
@@ -28,5 +18,6 @@ def get_advice():
         return jsonify({"reply": reply})
 
     except Exception as e:
-        print("Error:", str(e))
+        # 👇 log the real error so you can see it in Render’s logs
+        print("Error talking to OpenAI:", str(e))
         return jsonify({"reply": "Oops! My advice machine is jammed."})
