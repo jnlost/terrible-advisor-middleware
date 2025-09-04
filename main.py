@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 # 2️⃣ Load OpenAI API key from environment
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+openai.api_key = os.environ.get("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")
 
 # 3️⃣ Define /getAdvice route
 @app.route("/getAdvice", methods=["POST"])
@@ -43,3 +43,4 @@ def get_advice():
 # 4️⃣ Run the app
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
