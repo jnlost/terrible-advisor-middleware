@@ -3,20 +3,14 @@ from flask_cors import CORS
 import openai
 import os
 
-# --------------------------
-# 1️⃣ Create the Flask app
-# --------------------------
+# 1️⃣ Create Flask app
 app = Flask(__name__)
 CORS(app)
 
-# --------------------------
-# 2️⃣ Set up OpenAI
-# --------------------------
+# 2️⃣ Load OpenAI API key from environment
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-# --------------------------
-# 3️⃣ Define the /getAdvice route
-# --------------------------
+# 3️⃣ Define /getAdvice route
 @app.route("/getAdvice", methods=["POST"])
 def get_advice():
     data = request.json
@@ -24,9 +18,8 @@ def get_advice():
 
     system_prompt = """
     You are 'The Terrible Advisor' NPC in a Roblox game.
-    Give obviously silly, impractical, safe advice about snacks, school, fashion, chores, or video games.
-    Never give real health, crime, or dangerous advice.
-    Keep responses short (under 180 characters) and funny.
+    Always give funny, obviously bad but safe advice.
+    Keep responses short and playful.
     """
 
     try:
@@ -39,17 +32,14 @@ def get_advice():
             max_tokens=80,
             temperature=1
         )
-
         reply = response.choices[0].message.content
         return jsonify({"reply": reply})
 
     except Exception as e:
-        # Log the real error for debugging
-        print("Error talking to OpenAI:", str(e))
+        # Log the real error in Render logs
+        print("❌ OpenAI Error:", repr(e))
         return jsonify({"reply": "Oops! My advice machine is jammed."})
 
-# --------------------------
 # 4️⃣ Run the app
-# --------------------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
